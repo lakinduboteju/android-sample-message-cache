@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="room_names">
+        <item>Test-Room-1</item>
+        <item>Test-Room-2</item>
+        <item>Test-Room-3</item>
+    </string-array>
+    <string name="encrypt_secret_key">my-encrypt-secret</string>
+    <string name="encrypt_secret_value">YMU47Ust$2B7]z4A</string>
+</resources>

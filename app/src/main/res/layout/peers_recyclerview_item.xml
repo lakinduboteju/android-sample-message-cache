@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView
+    android:id="@+id/peer_textview"
+    android:layout_width="34dp"
+    android:layout_height="34dp"
+    android:layout_margin="4dp"
+    android:padding="0dp"
+    android:textStyle="bold"
+    android:textSize="18sp"
+    android:gravity="center"
+    android:background="@drawable/circle_background"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+</TextView>

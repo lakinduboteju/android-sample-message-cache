@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Skylink Message Cache Demo</string>
+    <string name="room_list_spinner_desc">Select a Room :</string>
+    <string name="send_button_name">Send</string>
+</resources>
