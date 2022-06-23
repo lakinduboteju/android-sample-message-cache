@@ -51,9 +51,26 @@ Run the app module.
 * [Skylink Message Cache SDK for Android Reference](https://cdn.temasys.com.sg/skylink/skylinkmessagecachesdk/android/latest/doc/reference/sg/com/temasys/skylink/sdk/messagecache/SkylinkMessageCache.html)
 
 
-## Implementation details
+## Skylink Message Cache SDK usage
 
-### 1. Configuring message caching
+### 1. Adding Skylink Message Cache SDK as dependency
+
+[app/build.gradle#Line:44](app/build.gradle#lines-44)
+
+```gradle
+dependencies {
+    implementation(group: 'sg.com.temasys.skylink.sdk',
+            name: 'skylink_sdk',
+            version: '2.3.0-RELEASE',
+            ext: 'aar') {
+        transitive = true
+    }
+
+    implementation 'sg.com.temasys.skylink.sdk:skylink_message_cache_sdk:1.0.0-RELEASE'
+}
+```
+
+### 2. Configuring message caching
 
 [skylink_sample/src/main/java/sg/com/temasys/skylink/sdk/sampleapp/service/ChatService.java#Line:126](skylink_sample/src/main/java/sg/com/temasys/skylink/sdk/sampleapp/service/ChatService.java#lines-126)
 
@@ -77,14 +94,17 @@ skylinkConfig.setMessageCachingLimit(100);
 
 * [`int SkylinkConfig.getMessageCachingLimit()`](https://cdn.temasys.com.sg/skylink/skylinksdk/android/latest/doc/reference/sg/com/temasys/skylink/sdk/rtc/SkylinkConfig.html#getMessageCachingLimit())
 
-### 2. Get cached messages
+### 3. Getting cached messages
 
 [app/src/main/java/sg/com/temasys/skylink/sdk/messagecache/demo/ChatPresenter.java#Line:121](app/src/main/java/sg/com/temasys/skylink/sdk/messagecache/demo/ChatPresenter.java#lines-121)
 
 ```java
 if ( SkylinkMessageCache.getInstance().isEnabled() ) {
+    // Get a readable session from the message cache to your room
     JSONArray cachedMsgs = SkylinkMessageCache.getInstance().getReadableSession("<your-room-name>").getCachedMessages();
-    // Assuming all cached messages are String messages (not JSONObject or JSONArray messages).
+    
+    // Processing cached messages :-
+    // Assuming all cached messages are String messages (not JSONObject or JSONArray messages)
     for (int i = 0; i < cachedMsgs.length(); i++) {
         JSONObject cachedMsg = (JSONObject) cachedMsgs.get(i);
         String senderId   = cachedMsg.getString("senderId");
@@ -92,4 +112,17 @@ if ( SkylinkMessageCache.getInstance().isEnabled() ) {
         long timestamp    = cachedMsg.getLong("timeStamp");
     }
 }
+```
+
+### 4. Clearing cached data
+
+```java
+// Get a writable session from the message cache to your room and clear cached messages of that room
+SkylinkMessageCache.getInstance().getWritableSession("<your-room-name>").clearCachedMessages();
+
+// Clear a specific cached room (including cached room information + cached messages)
+SkylinkMessageCache.getInstance().clearRoom("<your-room-name>");
+
+// Clear everything in the message cache (all cached rooms and cached messages)
+SkylinkMessageCache.getInstance().clearAll();
 ```
