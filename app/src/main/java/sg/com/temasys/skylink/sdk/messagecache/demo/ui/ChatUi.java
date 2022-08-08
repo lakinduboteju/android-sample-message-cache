@@ -67,12 +67,12 @@ public class ChatUi implements ChatPresenter.SkylinkEvents {
         mChatViewModel.mIsWaiting.observe(owner, isWaiting -> {
             if (isWaiting) {
                 waitingProgressBar.setVisibility(View.VISIBLE);
-                messageEditText.setVisibility(View.GONE);
-                sendButton.setVisibility(View.GONE);
+                // messageEditText.setVisibility(View.GONE);
+                // sendButton.setVisibility(View.GONE);
             } else {
                 waitingProgressBar.setVisibility(View.GONE);
-                messageEditText.setVisibility(View.VISIBLE);
-                sendButton.setVisibility(View.VISIBLE);
+                // messageEditText.setVisibility(View.VISIBLE);
+                // sendButton.setVisibility(View.VISIBLE);
             }
         });
 
@@ -136,9 +136,30 @@ public class ChatUi implements ChatPresenter.SkylinkEvents {
         mChatViewModel.mStoredMessages.postValue(null);
     }
 
+    public void appendToMessages(String peerId, String message, Long timestamp) {
+        JSONArray storedMessages = mChatViewModel.mStoredMessages.getValue();
+        if (storedMessages == null) storedMessages = new JSONArray();
+        JSONObject msg = new JSONObject();
+        try {
+            msg.put(Constants.MSG_SENDER_ID, peerId);
+            msg.put(Constants.MSG_DATA, message);
+            msg.put(Constants.MSG_TIMESTAMP, timestamp);
+        } catch (JSONException e) {
+            e.printStackTrace();
+            throw new AssertionError("Failed to create message JSONObject");
+        }
+        storedMessages.put(msg);
+        mChatViewModel.mStoredMessages.postValue(storedMessages);
+    }
+
     public void onMessageSent(String peerId, String message, Long timestamp) {
         appendToMessages(peerId, message, timestamp);
         mChatViewModel.mStatus.postValue("Message sent.");
+    }
+
+    public void onCachedMessages(JSONArray storedMessages) {
+        mChatViewModel.mStoredMessages.postValue(storedMessages);
+        mChatViewModel.mStatus.postValue("Received stored messages from local cache.");
     }
 
     @Override
@@ -188,21 +209,5 @@ public class ChatUi implements ChatPresenter.SkylinkEvents {
     @Override
     public void onMessageSendingFailed() {
         mChatViewModel.mStatus.postValue("Error : Failed to send the message.");
-    }
-
-    private void appendToMessages(String peerId, String message, Long timestamp) {
-        JSONArray storedMessages = mChatViewModel.mStoredMessages.getValue();
-        if (storedMessages == null) storedMessages = new JSONArray();
-        JSONObject msg = new JSONObject();
-        try {
-            msg.put(Constants.MSG_SENDER_ID, peerId);
-            msg.put(Constants.MSG_DATA, message);
-            msg.put(Constants.MSG_TIMESTAMP, timestamp);
-        } catch (JSONException e) {
-            e.printStackTrace();
-            throw new AssertionError("Failed to create message JSONObject");
-        }
-        storedMessages.put(msg);
-        mChatViewModel.mStoredMessages.postValue(storedMessages);
     }
 }

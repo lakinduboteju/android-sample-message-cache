@@ -1,6 +1,7 @@
 package sg.com.temasys.skylink.sdk.messagecache.demo;
 
 import android.content.Context;
+import android.util.Log;
 
 import org.json.JSONArray;
 
@@ -68,15 +69,20 @@ public class ChatPresenter extends BasePresenter implements ChatContract.Present
 
             mRoomName = roomName;
 
+            mSkylinkEventsCallback.onConnectionStateChanged(Constants.ConnectionStates.CONNECTING, mRoomName);
+
+            // Uncomment following line to simulate slowness in connection
+            try {Thread.sleep(3000);} catch (InterruptedException e) {}
+
             //connect to room on Skylink connection
             mChatService.connectToRoom(sg.com.temasys.skylink.sdk.sampleapp.utils.Constants.CONFIG_TYPE.CHAT, mRoomName);
             //after connected to skylink SDK, UI will be updated later on processRoomConnected
 
-            mSkylinkEventsCallback.onConnectionStateChanged(Constants.ConnectionStates.CONNECTING, mRoomName);
-
             // Wait for connection state change
             try { mConnectionStateChangeLatch.await(); } catch (InterruptedException e) { e.printStackTrace(); }
             mConnectionStateChangeLatch = null;
+
+            Log.d(Constants.LOG_TAG, "Room ID : " + mChatService.getRoomId());
         }
     }
 
@@ -244,9 +250,7 @@ public class ChatPresenter extends BasePresenter implements ChatContract.Present
      */
     @Override
     public void processStoredMessagesResult(JSONArray storedMessages) {
-        if (storedMessages != null) {
-            mSkylinkEventsCallback.onStoredMessagesReceived(storedMessages);
-        }
+        mSkylinkEventsCallback.onStoredMessagesReceived(storedMessages);
     }
 
     /**

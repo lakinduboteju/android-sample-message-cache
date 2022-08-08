@@ -185,4 +185,8 @@ public class ChatService extends SkylinkCommonService implements ChatContract.Se
 
         skylinkConnection.setEncryptSecretsMap(encryptionMap);
     }
+
+    public String getRoomId() {
+        return skylinkConnection.getRoomId();
+    }
 }
